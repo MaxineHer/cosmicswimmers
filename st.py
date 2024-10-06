@@ -9,12 +9,12 @@ choices = ["temperature", "precipitation","windspeed"]
 cat = st.selectbox("Choose Measure: ", choices, index=0)
 
 if (cat == "temperature"):
-    fig = px.choropleth(data_frame=df, locationmode="country names", scope="world", locations="Country", color="temperature", title="Temperatures")
+    fig1 = px.choropleth(data_frame=df, locationmode="country names", scope="world", locations="Country", color="temperature", title="Temperatures")
 if (cat == "precipitation"):
-    fig = px.choropleth(data_frame=df, locationmode="country names", scope="world", locations="Country", color="precipitation", title="Precipitations")
+    fig1 = px.choropleth(data_frame=df, locationmode="country names", scope="world", locations="Country", color="precipitation", title="Precipitations")
 if (cat == "windspeed"):
-    fig = px.choropleth(data_frame=df, locationmode="country names", scope="world", locations="Country", color="windspeed", title="Wind Speeds")
-st.plotly_chart(fig, use_container_width=True)
+    fig1 = px.choropleth(data_frame=df, locationmode="country names", scope="world", locations="Country", color="windspeed", title="Wind Speeds")
+st.plotly_chart(fig1)
 # newwwwie
 import pandas as pd
 import plotly.express as px
@@ -130,6 +130,131 @@ fig_prediction.update_layout(
 )
 # Display the figures
 
-st.plotly_chart(fig_map, use_container_width=True)
-st.plotly_chart(fig_heatmap, use_container_width=True)
-st.plotly_chart(fig_prediction, use_container_width=True)
+st.plotly_chart(fig_map )
+st.plotly_chart(fig_heatmap)
+st.plotly_chart(fig_prediction)
+
+file_path = (
+    "GlobalLandTemperaturesByCountry.csv"
+)
+
+climate_data = pd.read_csv(file_path)
+
+
+# Preview the first few rows of the data
+
+print(climate_data.head())
+
+# Convert the 'dt' column to datetime format
+
+climate_data["dt"] = pd.to_datetime(climate_data["dt"])
+
+
+# Filter data to include only November records
+
+climate_data_november = climate_data[climate_data["dt"].dt.month == 11]
+
+
+# Optionally, focus on a specific country (e.g., "United States")
+
+climate_data_november_us = climate_data_november[
+    climate_data_november["Country"] == "United States"
+]
+
+
+# Preview the filtered data
+
+print(climate_data_november_us.head())
+
+
+# basically an interactive line graph for November temperatures in the US
+
+fig2 = px.line(
+    climate_data_november_us,
+    x="dt",
+    y="AverageTemperature",
+    title="November Temperature Trends in the US",
+    labels={"AverageTemperature": "Average Temperature (°C)", "dt": "Date"},
+    hover_data=["Country"],
+)
+
+
+# Customizeee the plot
+
+fig2.update_layout(
+    xaxis_title="Date",
+    yaxis_title="Average Temperature (°C)",
+    title_font_size=20,
+    template="plotly_dark",
+)
+
+
+# Show the plot
+
+
+st.plotly_chart(fig2)
+
+# Load the dataset (replace with your file path)
+
+df = pd.read_csv(
+    "GlobalLandTemperaturesByCountry.csv"
+)
+
+
+# Convert 'dt' column to datetime
+
+df["dt"] = pd.to_datetime(df["dt"])
+
+
+# Filter the data for the month of November across all years
+
+df_november = df[df["dt"].dt.month == 11]
+
+
+df_november_avg = (
+    df_november.groupby([df_november["dt"].dt.year, "Country"])[
+        "AverageTemperature"
+    ]
+    .mean()
+    .reset_index()
+)
+
+
+# Rename columns for clarity
+
+df_november_avg.columns = ["Year", "Country", "AvgTemperature"]
+
+
+# Preview the data
+
+df_november_avg.head()
+
+fig = px.line(
+    df_november_avg,
+    x="Year",
+    y="AvgTemperature",
+    color="Country",
+    title="Average November Temperature Trends by Country",
+    labels={"Year": "Year", "AvgTemperature": "Average Temperature (°C)"},
+    template="plotly_dark",  # Attractive dark theme
+)
+
+fig.update_layout(
+    font=dict(size=16),
+    hovermode="x unified",  # Combine hover labels for easy reading
+    xaxis=dict(title="Year", tickformat="%Y", showgrid=True),
+    yaxis=dict(title="Avg Temperature (°C)", showgrid=True),
+    legend=dict(
+        title="Country",
+        orientation="h",
+        yanchor="bottom",
+        y=1.02,
+        xanchor="right",
+        x=1,
+    ),
+)
+
+
+# Display the plot
+
+st.plotly_chart(fig)

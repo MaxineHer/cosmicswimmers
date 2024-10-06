@@ -1,8 +1,7 @@
 streamlit
 pandas
 plotly.express
-plotly.graph_objects
-plotly.subplots
+plotly
 datetime
 numpy
-sklearn
+scikit-learn
