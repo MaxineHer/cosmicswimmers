@@ -4,9 +4,9 @@ import plotly.express as px
 
 st.write("COSMIC SWIMMERS WEATHER DASHBOARD")
 
-df = pd.read_csv("C:\\Users\\maxin\\OneDrive\\Documents\\School\\hackthonnasa\\avgs.csv")
+df = pd.read_csv("avgs.csv")
 choices = ["temperature", "precipitation","windspeed"]
-cat = st.selectbox("Choose Primary Type: ", choices, index=0)
+cat = st.selectbox("Choose Measure: ", choices, index=0)
 
 if (cat == "temperature"):
     fig = px.choropleth(data_frame=df, locationmode="country names", scope="world", locations="Country", color="temperature", title="Temperatures")
